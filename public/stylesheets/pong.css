@@ -1,0 +1,94 @@
+/* Site main CSS */
+#header {
+	position:			absolute;
+	top:				0px;
+	left:				0px;
+	right:				0px;
+	height:				30px;
+	background-color:	#6BB300;
+}
+	/* Sub header stuff */
+	#player_score_container {
+		float: left;
+	}
+
+	#computer_score_container {
+		float: right;
+	}
+
+	.score_container {
+		padding: 3px;
+		font-weight: bold;
+		color: white;
+	}
+
+#table {
+	cursor:				none;
+	position:			absolute;
+	top:				30px;
+	bottom:				30px;
+	left:				0px;
+	right:				0px;
+	background-color:	#EEF;
+}
+
+#footer {
+	position:			absolute;
+	bottom:				0px;
+	left:				0px;
+	right:				0px;
+	height:				22px;
+	padding:			4px;
+	background-color:	#6BB300;
+	font-size:			16px;
+	overflow:			hidden;
+	line-height:		22px;
+}
+	/* Sub footer stuff */
+	#viewSource {
+	}
+
+.goal {
+	position:			absolute;
+	top:				0px;
+	bottom:				0px;
+	width:				30px;
+	background-color:	black;
+}
+#goal_player {
+	left: 0px;
+}
+#goal_computer {
+	right: 0px;
+}
+
+
+/* Game Elements */
+.paddle {
+	position: absolute;
+	
+	background-color:	#BF0000;
+	border:				2px solid black;
+	width:				20px;
+	height:				150px;
+}
+
+#player {
+	left: 35px;
+}
+
+#computer {
+	right:	35px;
+}
+
+.ball {
+	position:			absolute;
+	background-color:	#006B6B;
+	width:				20px;
+	height:				20px;
+}
+
+#ball1 {
+	display: none;
+}
+
