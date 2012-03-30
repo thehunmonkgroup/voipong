@@ -206,7 +206,8 @@ $(document).ready(function(){
     console.log(data);
   }
   socket.on('status', log_server_response);
-  socket.on('key press', function (data) {
+  socket.on('answered', log_server_response);
+  socket.on('keyPressed', function (data) {
     console.log(data);
     socket.emit('key press received', { digit: data.digit });
   });
