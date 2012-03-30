@@ -7,6 +7,7 @@ var express = require('express');
 
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
+var esl = require('esl');
 var routes = require('./routes')(app, io);
 
 // Configuration
@@ -41,12 +42,36 @@ io.set('transports', [                     // enable all transports (optional if
   , 'jsonp-polling'
 ]);
 
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-});
+var fsconn = esl.createCallServer()
+fsconn.listen(3001);
+
+// socket.io.
+var log_client_response = function(data) {
+  console.log("From client: %s", data);
+}
+
+var socket_connected = function(socket) {
+
+  // FreeSWITCH.
+  var call_connected = function(call) {
+    //console.log(call);
+    var dtmf_received = function(e) {
+      var digit = e.body['DTMF-Digit']
+      socket.emit('key press', { digit: digit });
+      //console.log(e);
+    }
+    call.on('DTMF', dtmf_received);
+    call.execute('answer');
+  }
+  fsconn.on('CONNECT', call_connected);
+
+  var status_message = function(message) {
+    socket.emit('status', { message: message });
+  }
+  status_message('ready to start demo');
+  socket.on('key press received', log_client_response);
+}
+io.sockets.on('connection', socket_connected);
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

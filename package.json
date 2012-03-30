@@ -4,6 +4,7 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.5"
+    , "esl": ">= 0.2.18"
     , "jade": ">= 0.0.1"
     , "socket.io": ">= 0.9.0"
   }
