@@ -199,7 +199,18 @@ $.pong = {
 
 $(document).ready(function(){
 	$('#viewSource').click($.pong.viewSource);
-	
+
+  var socket = io.connect('http://localhost:3000');
+
+  var log_server_response = function (data) {
+    console.log(data);
+  }
+  socket.on('status', log_server_response);
+  socket.on('key press', function (data) {
+    console.log(data);
+    socket.emit('key press received', { digit: data.digit });
+  });
+
 	$.pong.setup();
 	$.pong.startRound();
 	$(window).resize($.pong.startRound);
