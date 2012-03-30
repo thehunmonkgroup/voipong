@@ -221,7 +221,7 @@ $.pong = {
 $(document).ready(function(){
 	$('#viewSource').click($.pong.viewSource);
 
-  var socket = io.connect('http://localhost:3000');
+  var socket = io.connect();
 
   var log_server_response = function (data) {
     console.log(data);
