@@ -18,6 +18,8 @@ $.pong = {
 		$.pong.player.height		= $.pong.player.el.height();
 		$.pong.player.width			= $.pong.player.el.width();
 		$.pong.player.position.x	= $.pong.player.el.position().left;
+    // # of pixels to move on key press.
+		$.pong.player.yInterval	= 50;
 		$.pong.player.leftedge		= $.pong.player.position.x;
 		$.pong.player.rightedge		= $.pong.player.position.x + $.pong.player.width;
 
@@ -30,7 +32,7 @@ $.pong = {
 		$.pong.ball.width		= $.pong.ball.el.width();
 		$.pong.ball.height		= $.pong.ball.el.height();
 
-		$('#table').mousemove($.pong.mouseMoved);
+		//$('#table').mousemove($.pong.mouseMoved);
 	},
 
 	startRound: function(){
@@ -56,6 +58,25 @@ $.pong = {
 
 		$.pong.table.height	= $.pong.table.el.height();
 		$.pong.table.width	= $.pong.table.el.width();
+	},
+
+	keyPressed: function(digit){
+		var playerHeight		= $.pong.player.height;
+		var tableHeight			= $.pong.table.height;
+    var increment = 0;
+
+    if (digit == '2') {
+      increment -= $.pong.player.yInterval;
+    }
+    else if (digit == '8') {
+      increment = $.pong.player.yInterval;
+    }
+
+		var y = $.pong.player.position.y + increment;
+		if(y < 0)								y = 0;
+		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
+
+		$.pong.player.position.y = y;
 	},
 
 	mouseMoved: function(e){
@@ -207,10 +228,12 @@ $(document).ready(function(){
   }
   socket.on('status', log_server_response);
   socket.on('answered', log_server_response);
-  socket.on('keyPressed', function (data) {
+  var key_pressed = function (data) {
     console.log(data);
     socket.emit('key press received', { digit: data.digit });
-  });
+    $.pong.keyPressed(data.digit);
+  }
+  socket.on('keyPressed', key_pressed);
 
 	$.pong.setup();
 	$.pong.startRound();
