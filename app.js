@@ -64,7 +64,7 @@ models.Call = Backbone.Model.extend({
     // This is a hack to force some media over the channel, which smooths
     // out provider problems with them not recognizing we're ready to receive
     // data.
-    this._call.execute('playback', 'silence_stream://1000');
+    this._call.execute('playback', 'voipong/intro.wav');
     this.trigger('answered');
   },
   keyPressed: function(args) {
