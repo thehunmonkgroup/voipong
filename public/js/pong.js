@@ -2,6 +2,7 @@
 // Functions -- Kept in a JQuery namespace
 $.pong = {
 	setup: function(){
+    $.pong.gamestarted = false;
 		$.pong.table		= {	el:	$('#table')};
 		$.pong.player		= {	el:				$('#player'),
 								position:		{x:false,y:0}},
@@ -32,6 +33,9 @@ $.pong = {
 		$.pong.ball.width		= $.pong.ball.el.width();
 		$.pong.ball.height		= $.pong.ball.el.height();
 
+		$.pong.table.height	= $.pong.table.el.height();
+		$.pong.table.width	= $.pong.table.el.width();
+
 		//$('#table').mousemove($.pong.mouseMoved);
 	},
 
@@ -55,9 +59,6 @@ $.pong = {
 
 		$.pong.ball.el.show();
 		$.pong.lastUpdate = $.pong.getTime();
-
-		$.pong.table.height	= $.pong.table.el.height();
-		$.pong.table.width	= $.pong.table.el.width();
 	},
 
 	keyPressed: function(digit){
@@ -77,6 +78,7 @@ $.pong = {
 		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
 
 		$.pong.player.position.y = y;
+		$.pong.redraw();
 	},
 
 	mouseMoved: function(e){
@@ -220,24 +222,30 @@ $.pong = {
 
 $(document).ready(function(){
 	$('#viewSource').click($.pong.viewSource);
+	$.pong.setup();
 
   var socket = io.connect();
-
   var log_server_response = function (data) {
     console.log(data);
   }
   socket.on('status', log_server_response);
   socket.on('answered', log_server_response);
   var key_pressed = function (data) {
-    console.log(data);
-    socket.emit('key press received', { digit: data.digit });
-    $.pong.keyPressed(data.digit);
+    log_server_response(data);
+    var digit = data.digit;
+    socket.emit('key press received', { digit: digit });
+    if (digit == '5') {
+      if (!$.pong.gamestarted) {
+        $.pong.gamestarted = true;
+        $.pong.startRound();
+        $(window).resize($.pong.startRound);
+        $.pong.update();
+      }
+    }
+    else {
+      $.pong.keyPressed(digit);
+    }
   }
   socket.on('keyPressed', key_pressed);
-
-	$.pong.setup();
-	$.pong.startRound();
-	$(window).resize($.pong.startRound);
-	$.pong.update();
 });
 
