@@ -14,22 +14,22 @@ $.pong = {
 								acceleration:	{x:0.0005,y:0.0005},
 								velocity_start:	0.5,
 								velocity_max:	3};
-		
+
 		$.pong.player.height		= $.pong.player.el.height();
 		$.pong.player.width			= $.pong.player.el.width();
 		$.pong.player.position.x	= $.pong.player.el.position().left;
 		$.pong.player.leftedge		= $.pong.player.position.x;
 		$.pong.player.rightedge		= $.pong.player.position.x + $.pong.player.width;
-		
+
 		$.pong.computer.height	= $.pong.computer.el.height();
 		$.pong.computer.width	= $.pong.computer.el.width();
 		$.pong.computer.position.x	= $.pong.computer.el.position().left;
 		$.pong.computer.leftedge	= $.pong.computer.position.x;
 		$.pong.computer.rightedge	= $.pong.computer.position.x + $.pong.computer.width;
-		
+
 		$.pong.ball.width		= $.pong.ball.el.width();
 		$.pong.ball.height		= $.pong.ball.el.height();
-		
+
 		$('#table').mousemove($.pong.mouseMoved);
 	},
 
@@ -37,8 +37,8 @@ $.pong = {
 		// Set ball in middle of screen
 		$.pong.ball.position = {	x: Math.floor($.pong.table.el.width()/2),
 									y: Math.floor($.pong.table.el.height()/2)};
-	
-		
+
+
 		// Set ball direction randomly with weight to x direction and constant starting velocity
 		var totalVelocity = $.pong.ball.velocity_start;
 		$.pong.ball.velocity.x = Math.random() * totalVelocity*.5 + totalVelocity*.5;
@@ -48,12 +48,12 @@ $.pong = {
 
 		// Set computer level display
 		$('#computer_level').html(Math.floor($.pong.computer.velocity*10 - 1).toFixed(0));
-		
+
 		$.pong.redraw();
-		
+
 		$.pong.ball.el.show();
 		$.pong.lastUpdate = $.pong.getTime();
-		
+
 		$.pong.table.height	= $.pong.table.el.height();
 		$.pong.table.width	= $.pong.table.el.width();
 	},
@@ -61,14 +61,14 @@ $.pong = {
 	mouseMoved: function(e){
 		var playerHeight		= $.pong.player.height;
 		var tableHeight			= $.pong.table.height;
-		
+
 		var y = e.clientY - (playerHeight / 2);
 		if(y < 0)								y = 0;
 		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
 
 		$.pong.player.position.y = y;
 	},
-	
+
 	update: function(){
 		var t = $.pong.getTime();
 		var diff = t - $.pong.lastUpdate;
@@ -78,7 +78,7 @@ $.pong = {
 		// Move ball
 		var new_x	= $.pong.ball.position.x + $.pong.ball.velocity.x*coeff;
 		var new_y	= $.pong.ball.position.y + $.pong.ball.velocity.y*coeff;
-		
+
 		// Check for collisions with top / bottom wall
 		if((new_y+$.pong.ball.height) > $.pong.table.height){
 			// Bottom
@@ -90,7 +90,7 @@ $.pong = {
 			new_y = 0;
 		}
 
-		// Check for collisions with paddles 
+		// Check for collisions with paddles
 		//console.log('cl:'+$.pong.computer.leftedge);
 		//console.log('cr:'+$.pong.computer.rightedge);
 		if(new_x >= $.pong.computer.leftedge && new_x <= $.pong.computer.rightedge){
@@ -124,13 +124,13 @@ $.pong = {
 			setTimeout('$.pong.update();', 20);
 			return;
 		}
-		
+
 		$.pong.ball.position = {	x: new_x,
 									y: new_y };
-		
+
 		// END: Move ball
 		///////////////////////
-		
+
 		///////////////////////
 		// Move computer
 		var midComputer	= $.pong.computer.position.y + ($.pong.computer.height / 2);
@@ -152,7 +152,7 @@ $.pong = {
 
 		// END: Move computer
 		///////////////////////
-		
+
 		/////////////////////
 		// Accellerate balli
 		var velocity = Math.pow(Math.pow($.pong.ball.velocity.x, 2) + Math.pow($.pong.ball.velocity.y, 2), 0.5);
@@ -170,21 +170,21 @@ $.pong = {
 		}
 		// Accellerate ball
 		/////////////////////
-		
+
 		$.pong.redraw();
-		
+
 		$.pong.lastUpdate = t;
 		setTimeout('$.pong.update();', 20);
 	},
-	
+
 	redraw: function(){
 		$.pong.ball.el.css('left',	$.pong.ball.position.x);
 		$.pong.ball.el.css('top',	$.pong.ball.position.y);
-		
+
 		$.pong.player.el.css('top', $.pong.player.position.y);
 		$.pong.computer.el.css('top', $.pong.computer.position.y);
 	},
-	
+
 	getTime: function(){
 		var d = new Date();
 		return d.getTime();
