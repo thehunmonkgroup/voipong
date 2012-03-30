@@ -5,18 +5,24 @@
 	left:				0px;
 	right:				0px;
 	height:				30px;
-	background-color:	#6BB300;
+	background-color:	black;
 }
 	/* Sub header stuff */
 	#player_score_container {
 		float: left;
 	}
 
+  #title_container {
+		float: left;
+    padding-left: 500px;
+    font-size: 1.2em;
+  }
+
 	#computer_score_container {
 		float: right;
 	}
 
-	.score_container {
+	.score_container, .title {
 		padding: 3px;
 		font-weight: bold;
 		color: white;
@@ -29,7 +35,7 @@
 	bottom:				30px;
 	left:				0px;
 	right:				0px;
-	background-color:	#EEF;
+	background-color:	black;
 }
 
 #footer {
@@ -67,8 +73,8 @@
 .paddle {
 	position: absolute;
 	
-	background-color:	#BF0000;
-	border:				2px solid black;
+	background-color:	white;
+	/* border:				2px solid black; */
 	width:				20px;
 	height:				150px;
 }
@@ -83,7 +89,7 @@
 
 .ball {
 	position:			absolute;
-	background-color:	#006B6B;
+	background-color:	white;
 	width:				20px;
 	height:				20px;
 }
