@@ -1,3 +1,4 @@
+var debug = true;
 
 /**
  * Module dependencies.
@@ -9,6 +10,7 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
 var esl = require('esl');
+esl.debug = false;
 var Backbone = require('backbone');
 var routes = require('./routes')(app, io);
 
@@ -44,12 +46,18 @@ io.set('transports', [                     // enable all transports (optional if
   , 'jsonp-polling'
 ]);
 
+var debug_log = function(message) {
+  if (debug) {
+    console.log(message);
+  }
+}
+
 var models = {};
 
 models.Call = Backbone.Model.extend({
   initialize: function(options) {
     // Bind this beforehand.
-    _.bindAll(this, 'keyPressed', 'answer');
+    _.bindAll(this, 'keyPressed', 'answer', 'hangup');
 
     // Set a private member to keep track of the call.
     this._call = options.call;
@@ -57,19 +65,28 @@ models.Call = Backbone.Model.extend({
     // Trigger a local method on these events,
     // could also be a map against pretty names / arg transforms
     this._call.on('DTMF', this.keyPressed);
+    this._call.on('CHANNEL_HANGUP', this.hangup);
+
+    debug_log("initialized new call: " + this.id);
   },
   answer: function() {
+    debug_log("answering call " + this.id);
     // Answer the call and emit an event.
     this._call.execute('answer');
     // This is a hack to force some media over the channel, which smooths
     // out provider problems with them not recognizing we're ready to receive
     // data.
     this._call.execute('playback', 'voipong/intro.wav');
-    this.trigger('answered');
+    this.trigger('answered', this.id);
   },
-  keyPressed: function(args) {
+  hangup: function(data) {
+    debug_log("call hung up: " + this.id);
+    this.trigger('hungUp', this.id);
+  },
+  keyPressed: function(data) {
+    debug_log("key press on " + this.id + ": " + data.body['DTMF-Digit']);
     // Emit an event for the keypress.
-    this.trigger('keyPressed', args);
+    this.trigger('keyPressed', data);
   }
 });
 
@@ -90,9 +107,19 @@ activeCalls.on('add', add_call);
 // FreeSWITCH.
 var fsconn = esl.createCallServer()
 var call_connected = function(call) {
-  // Just adding it to this collection will
-  // instantiate it and trigger events.
-  activeCalls.add([ {call: call} ]);
+  // Only two players, so drop other calls.
+  if (activeCalls.length < 2) {
+    // Just adding it to this collection will
+    // instantiate it and trigger events.
+    var new_call = {
+      id: call.body.variable_uuid,
+      call: call,
+    }
+    activeCalls.add([ new_call ]);
+  }
+  else {
+    call.hangup();
+  }
 }
 fsconn.on('CONNECT', call_connected);
 fsconn.listen(3001);
