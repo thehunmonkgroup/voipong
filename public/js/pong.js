@@ -225,11 +225,18 @@ $(document).ready(function(){
 	$.pong.setup();
 
   var socket = io.connect();
-  var log_server_response = function (data) {
-    console.log(data);
+  var log_server_response = function () {
+    console.log.call(null, arguments);
   }
   socket.on('status', log_server_response);
-  socket.on('answered', log_server_response);
+  var new_player = function(id) {
+    log_server_response('player joined', id);
+  };
+  socket.on('new player', new_player);
+  var player_quit = function(id) {
+    log_server_response('player quit', id);
+  };
+  socket.on('player quit', player_quit);
   var key_pressed = function (data) {
     log_server_response(data);
     var digit = data.digit;

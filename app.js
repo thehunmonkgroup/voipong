@@ -84,9 +84,14 @@ models.Call = Backbone.Model.extend({
     this.trigger('hungUp', this.id);
   },
   keyPressed: function(data) {
-    debug_log("key press on " + this.id + ": " + data.body['DTMF-Digit']);
+    var digit = data.body['DTMF-Digit'];
+    debug_log("key press on " + this.id + ": " + digit);
+    var event_data = {
+      id: this.id,
+      digit: digit,
+    }
     // Emit an event for the keypress.
-    this.trigger('keyPressed', data);
+    this.trigger('keyPressed', event_data);
   }
 });
 
@@ -136,12 +141,16 @@ var socket_connected = function(socket) {
     socket.emit('status', { message: message });
   }
   status_message('ready to start demo');
-  var answered = function() {
-    status_message('call connected');
+  var answered = function(id) {
+    socket.emit('new player', id);
   }
   activeCalls.on("answered", answered);
+  var hungup = function(id) {
+    socket.emit('player quit', id);
+  }
+  activeCalls.on("hungUp", hungup);
   var key_pressed = function(data) {
-    socket.emit("keyPressed", {digit: data.body['DTMF-Digit']});
+    socket.emit("keyPressed", data);
   }
   activeCalls.on("keyPressed", key_pressed);
 }
