@@ -40,22 +40,24 @@ $.pong = {
 		//$('#table').mousemove($.pong.mouseMoved);
 	},
 
+  playerCount: function() {
+    return _.size($.pong.playermap);
+  },
+
   addPlayer: function(uuid) {
     var player = 'player1';
-    var id = null;
-    if (_.size($.pong.playermap) > 0) {
-      for (key in $.pong.playermap) {
-        id = $.pong.playermap[key];
-      }
-      if (id == 'player1') {
-        player = 'player2';
-      }
+    if ($.pong.playerCount() > 0) {
+      player = 'player2';
     }
     $.pong.playermap[uuid] = player;
   },
 
   removePlayer: function(uuid) {
     delete $.pong.playermap[uuid];
+    // Force remaining player (if any) to player1.
+    for (key in $.pong.playermap) {
+      $.pong.playermap[key] = 'player1';
+    }
   },
 
 	startRound: function(){
@@ -81,7 +83,8 @@ $.pong = {
 	},
 
 	keyPressed: function(id, digit){
-		var playerHeight		= $.pong.player.height;
+    var player = $.pong.playermap[id] == 'player1' ? 'player' : 'computer';
+		var playerHeight		= $.pong[player].height;
 		var tableHeight			= $.pong.table.height;
     var increment = 0;
 
@@ -92,14 +95,12 @@ $.pong = {
       increment = $.pong.player.yInterval;
     }
 
-		var y = $.pong.player.position.y + increment;
+		var y = $.pong[player].position.y + increment;
 		if(y < 0)								y = 0;
 		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
 
-    if ($.pong.playermap[id] == 'player1') {
-		  $.pong.player.position.y = y;
-		  $.pong.redraw();
-    }
+    $.pong[player].position.y = y;
+    $.pong.redraw();
 	},
 
 	mouseMoved: function(e){
@@ -175,27 +176,31 @@ $.pong = {
 		// END: Move ball
 		///////////////////////
 
-		///////////////////////
-		// Move computer
-		var midComputer	= $.pong.computer.position.y + ($.pong.computer.height / 2);
-		var midBall		= $.pong.ball.position.y + ($.pong.ball.height / 2);
-		var new_y;
-		if(midComputer < midBall){
-			new_y = $.pong.computer.position.y + $.pong.computer.velocity * coeff;
-			if((new_y + ($.pong.computer.height / 2)) > midBall)	new_y = midBall - ($.pong.computer.height / 2);	// Don't pass the ball
-		}else if(midComputer >= midBall){
-			new_y = $.pong.computer.position.y - $.pong.computer.velocity * coeff;
-			if((new_y + ($.pong.computer.height / 2)) < midBall)	new_y = midBall - ($.pong.computer.height / 2);	// Don't pass the ball
-		}
+    ///////////////////////
+    // Move computer
+    // Only necessary if there aren't 2 players.
+    ///////////////////////
+    if ($.pong.playerCount() < 2) {
+      var midComputer	= $.pong.computer.position.y + ($.pong.computer.height / 2);
+      var midBall		= $.pong.ball.position.y + ($.pong.ball.height / 2);
+      var new_y;
+      if(midComputer < midBall){
+        new_y = $.pong.computer.position.y + $.pong.computer.velocity * coeff;
+        if((new_y + ($.pong.computer.height / 2)) > midBall)	new_y = midBall - ($.pong.computer.height / 2);	// Don't pass the ball
+      }else if(midComputer >= midBall){
+        new_y = $.pong.computer.position.y - $.pong.computer.velocity * coeff;
+        if((new_y + ($.pong.computer.height / 2)) < midBall)	new_y = midBall - ($.pong.computer.height / 2);	// Don't pass the ball
+      }
 
-		// Make sure not off the edge
-		if(new_y < 0)												new_y = 0;
-		if((new_y + $.pong.computer.height) > $.pong.table.height)	new_y = $.pong.table.height - $.pong.computer.height;
+      // Make sure not off the edge
+      if(new_y < 0)												new_y = 0;
+      if((new_y + $.pong.computer.height) > $.pong.table.height)	new_y = $.pong.table.height - $.pong.computer.height;
 
-		$.pong.computer.position.y = new_y;
+      $.pong.computer.position.y = new_y;
+    }
 
-		// END: Move computer
-		///////////////////////
+    // END: Move computer
+    ///////////////////////
 
 		/////////////////////
 		// Accellerate balli
