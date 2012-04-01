@@ -2,6 +2,7 @@
 // Functions -- Kept in a JQuery namespace
 $.pong = {
 	setup: function(){
+    $.pong.playermap = {};
     $.pong.gamestarted = false;
 		$.pong.table		= {	el:	$('#table')};
 		$.pong.player		= {	el:				$('#player'),
@@ -39,6 +40,24 @@ $.pong = {
 		//$('#table').mousemove($.pong.mouseMoved);
 	},
 
+  addPlayer: function(uuid) {
+    var player = 'player1';
+    var id = null;
+    if (_.size($.pong.playermap) > 0) {
+      for (key in $.pong.playermap) {
+        id = $.pong.playermap[key];
+      }
+      if (id == 'player1') {
+        player = 'player2';
+      }
+    }
+    $.pong.playermap[uuid] = player;
+  },
+
+  removePlayer: function(uuid) {
+    delete $.pong.playermap[uuid];
+  },
+
 	startRound: function(){
 		// Set ball in middle of screen
 		$.pong.ball.position = {	x: Math.floor($.pong.table.el.width()/2),
@@ -61,7 +80,7 @@ $.pong = {
 		$.pong.lastUpdate = $.pong.getTime();
 	},
 
-	keyPressed: function(digit){
+	keyPressed: function(id, digit){
 		var playerHeight		= $.pong.player.height;
 		var tableHeight			= $.pong.table.height;
     var increment = 0;
@@ -77,8 +96,10 @@ $.pong = {
 		if(y < 0)								y = 0;
 		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
 
-		$.pong.player.position.y = y;
-		$.pong.redraw();
+    if ($.pong.playermap[id] == 'player1') {
+		  $.pong.player.position.y = y;
+		  $.pong.redraw();
+    }
 	},
 
 	mouseMoved: function(e){
@@ -230,17 +251,21 @@ $(document).ready(function(){
   }
   socket.on('status', log_server_response);
   var new_player = function(id) {
+    $.pong.addPlayer(id);
     log_server_response('player joined', id);
+
   };
   socket.on('new player', new_player);
   var player_quit = function(id) {
+    $.pong.removePlayer(id);
     log_server_response('player quit', id);
   };
   socket.on('player quit', player_quit);
   var key_pressed = function (data) {
     log_server_response(data);
+    var id = data.id;
     var digit = data.digit;
-    socket.emit('key press received', { digit: digit });
+    socket.emit('key press received', data);
     if (digit == '5') {
       if (!$.pong.gamestarted) {
         $.pong.gamestarted = true;
@@ -250,7 +275,7 @@ $(document).ready(function(){
       }
     }
     else {
-      $.pong.keyPressed(digit);
+      $.pong.keyPressed(id, digit);
     }
   }
   socket.on('keyPressed', key_pressed);
