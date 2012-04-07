@@ -109,6 +109,11 @@ var add_call = function(call) {
 }
 activeCalls.on('add', add_call);
 
+var remove_call = function(call) {
+  debug_log("removing call: " + call.id);
+}
+activeCalls.on('remove', remove_call);
+
 // FreeSWITCH.
 var fsconn = esl.createCallServer()
 var call_connected = function(call) {
@@ -146,6 +151,8 @@ var socket_connected = function(socket) {
   }
   activeCalls.on("answered", answered);
   var hungup = function(id) {
+    var call = activeCalls.get(id);
+    activeCalls.remove(call);
     socket.emit('player quit', id);
   }
   activeCalls.on("hungUp", hungup);
