@@ -74,7 +74,7 @@ $.pong = {
 		if(Math.random() > 0.5)	$.pong.ball.velocity.x *= -1;
 
 		// Set computer level display
-		$('#computer_level').html(Math.floor($.pong.computer.velocity*10 - 1).toFixed(0));
+		//$('#computer_level').html(Math.floor($.pong.computer.velocity*10 - 1).toFixed(0));
 
 		$.pong.redraw();
 
