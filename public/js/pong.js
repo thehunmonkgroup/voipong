@@ -4,6 +4,7 @@ $.pong = {
 	setup: function(){
     $.pong.playermap = {};
     $.pong.gamestarted = false;
+    $.pong.winningscore = 3;
 		$.pong.table		= {	el:	$('#table')};
 		$.pong.player		= {	el:				$('#player'),
 								position:		{x:false,y:0}},
@@ -170,6 +171,11 @@ $.pong = {
 			return;
 		}
 
+    if (Math.floor($('#computer_score').html()) >= $.pong.winningscore || Math.floor($('#player_score').html()) >= $.pong.winningscore) {
+      $('#ball1').hide();
+      alert("Game over!");
+      return;
+    }
 		$.pong.ball.position = {	x: new_x,
 									y: new_y };
 
