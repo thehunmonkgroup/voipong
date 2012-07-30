@@ -7,7 +7,7 @@ This was a demo used for http://www.cluecon.com/presentation/stupid-things-you-c
 
 In FreeSWITCH, add the following extension:
 
-    <!-- Extension for VoIPong -->
+    <!-- Internal extension for VoIPong -->
     <extension name="voipong">
       <condition field="destination_number" expression="^voipong$" break="on-true">
         <action application="socket" data="127.0.0.1:3001 async full"/>
