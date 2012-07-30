@@ -3,7 +3,7 @@ Play pong in a browser using your phone as the controller.
 
 This was a demo used for http://www.cluecon.com/presentation/stupid-things-you-can-do-voip
 
-## Usage  ##
+## Installation  ##
 
 In FreeSWITCH, add the following extension:
 
@@ -20,9 +20,11 @@ Symlink the prompts directory to a voipong directory in your sounds directory, s
 
     ln -s /path/to/voipong/prompts /usr/local/freeswitch/sounds/en/us/callie/voipong
 
+## Usage  ##
+
 Start the node app:
 
-    cd /path/to/voippong; node app.js
+    cd /path/to/voippong/node_app; node app.js
 
 Point a broswer at the server on port 3000.
 
