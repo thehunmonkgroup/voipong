@@ -16,6 +16,10 @@ In FreeSWITCH, add the following extension:
 
 Configure something to transfer to it.
 
+Symlink the prompts directory to a voipong directory in your sounds directory, something like:
+
+    ln -s /path/to/voipong/prompts /usr/local/freeswitch/sounds/en/us/callie/voipong
+
 Start the node app:
 
     cd /path/to/voippong; node app.js
