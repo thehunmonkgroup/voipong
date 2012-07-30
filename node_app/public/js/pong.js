@@ -37,8 +37,6 @@ $.pong = {
 
 		$.pong.table.height	= $.pong.table.el.height();
 		$.pong.table.width	= $.pong.table.el.width();
-
-		//$('#table').mousemove($.pong.mouseMoved);
 	},
 
   playerCount: function() {
@@ -74,9 +72,6 @@ $.pong = {
 		if(Math.random() > 0.5)	$.pong.ball.velocity.y *= -1;
 		if(Math.random() > 0.5)	$.pong.ball.velocity.x *= -1;
 
-		// Set computer level display
-		//$('#computer_level').html(Math.floor($.pong.computer.velocity*10 - 1).toFixed(0));
-
 		$.pong.redraw();
 
 		$.pong.ball.el.show();
@@ -104,17 +99,6 @@ $.pong = {
     $.pong.redraw();
 	},
 
-	mouseMoved: function(e){
-		var playerHeight		= $.pong.player.height;
-		var tableHeight			= $.pong.table.height;
-
-		var y = e.clientY - (playerHeight / 2);
-		if(y < 0)								y = 0;
-		if((y + playerHeight) > tableHeight)	y = tableHeight - playerHeight;
-
-		$.pong.player.position.y = y;
-	},
-
 	update: function(){
 		var t = $.pong.getTime();
 		var diff = t - $.pong.lastUpdate;
@@ -140,13 +124,13 @@ $.pong = {
 		//console.log('cl:'+$.pong.computer.leftedge);
 		//console.log('cr:'+$.pong.computer.rightedge);
 		if(new_x >= $.pong.computer.leftedge && new_x <= $.pong.computer.rightedge){
-			// Right (computer)
+			// Right (computer or player2)
 			if(($.pong.computer.position.y < new_y) && ($.pong.computer.height+$.pong.computer.position.y > new_y)){
 				$.pong.ball.velocity.x = -1*Math.abs($.pong.ball.velocity.x);
 				new_x = $.pong.computer.leftedge;
 			}
 		} else if(new_x <= $.pong.player.rightedge && new_x >= $.pong.player.leftedge){
-			// Left (player)
+			// Left (player1)
 			if(($.pong.player.position.y < new_y) && ($.pong.player.height+$.pong.player.position.y > new_y)){
 				$.pong.ball.velocity.x = Math.abs($.pong.ball.velocity.x);
 				new_x = $.pong.player.rightedge;
@@ -155,17 +139,21 @@ $.pong = {
 
 		// Check for win / loss
 		if(new_x < 0){
-			// Player loss
+			// player1 loss
 			$('#computer_score').html(Math.floor($('#computer_score').html())+1);
-			$.pong.computer.velocity = Math.max(0.1, $.pong.computer.velocity-0.1);
+      if ($.pong.playerCount() < 2) {
+        $.pong.computer.velocity = Math.max(0.1, $.pong.computer.velocity-0.1);
+      }
 			$.pong.startRound();
 			setTimeout('$.pong.update();', 20);
 			return;
 
-			// Computer loss
+			// computer/player2 loss
 		} else if(new_x > ($.pong.table.width - 20)){
 			$('#player_score').html(Math.floor($('#player_score').html())+1);
-			$.pong.computer.velocity = $.pong.computer.velocity+0.1;
+      if ($.pong.playerCount() < 2) {
+			  $.pong.computer.velocity = $.pong.computer.velocity+0.1;
+      }
 			$.pong.startRound();
 			setTimeout('$.pong.update();', 20);
 			return;
@@ -245,15 +233,12 @@ $.pong = {
 		return d.getTime();
 	},
 
-	viewSource: function(){
-		alert('Not yet implemented');
-	}
 };
+
 // END: Functions
 ///////////////////////////////////////////
 
 $(document).ready(function(){
-	$('#viewSource').click($.pong.viewSource);
 	$.pong.setup();
 
   var socket = io.connect();
