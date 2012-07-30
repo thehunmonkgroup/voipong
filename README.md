@@ -34,3 +34,9 @@ Call your device.
 
 Yes, mosquitoes.
 
+## Credits ##
+
+Javascript pong code lifted from http://zinid.com/jspong and modified heavily.
+
+Backbone call handling code mostly written by [Adrian Rossouw](http://daemon.co.za)
+
