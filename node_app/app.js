@@ -73,9 +73,6 @@ models.Call = Backbone.Model.extend({
     debug_log("answering call " + this.id);
     // Answer the call and emit an event.
     this._call.execute('answer');
-    // This is a hack to force some media over the channel, which smooths
-    // out provider problems with them not recognizing we're ready to receive
-    // data.
     this._call.execute('playback', 'voipong/intro.wav');
     this.trigger('answered', this.id);
   },
