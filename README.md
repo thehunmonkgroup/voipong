@@ -5,6 +5,12 @@ This was a demo used for http://www.cluecon.com/presentation/stupid-things-you-c
 
 ## Installation  ##
 
+You need [node.js](http://nodejs.org/) and [NPM](http://npmjs.org/) installed.
+
+Install the node dependencies:
+
+    cd /path/to/checkout/node_app; npm install
+
 In FreeSWITCH, add the following extension:
 
     <!-- Internal extension for VoIPong -->
