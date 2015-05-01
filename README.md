@@ -1,7 +1,7 @@
 # VoIPong #
 Play pong in a browser using your phone as the controller.
 
-This was a demo used for http://www.cluecon.com/presentation/stupid-things-you-can-do-voip
+This was a demo used for the 2012 [Cluecon](http://www.cluecon.com) presentation [Stupid Things You Can Do With VoIP](https://www.youtube.com/watch?v=cZSRkkbf1D0).
 
 ## Installation  ##
 
