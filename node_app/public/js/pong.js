@@ -243,7 +243,7 @@ $(document).ready(function(){
 
   var socket = io.connect();
   var log_server_response = function () {
-    console.log.call(null, arguments);
+    console.log.call(console.log, arguments);
   }
   socket.on('status', log_server_response);
   var new_player = function(id) {
