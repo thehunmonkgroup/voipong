@@ -3,6 +3,13 @@ Play pong in a browser using your phone as the controller.
 
 This was a demo used for the 2012 [Cluecon](http://www.cluecon.com) presentation [Stupid Things You Can Do With VoIP](https://www.youtube.com/watch?v=cZSRkkbf1D0).
 
+As of January 2016, tested as working in the following browsers:
+
+ * Chrome
+ * Firefox
+ * Opera
+ * Safari
+
 ## Installation  ##
 
 You need [node.js](http://nodejs.org/) and [NPM](http://npmjs.org/) installed.
