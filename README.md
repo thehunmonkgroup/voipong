@@ -36,6 +36,10 @@ Point a broswer at the server on port 3000.
 
 Call your device.
 
+## Caveats ##
+
+Only one browser page can be open for the game to work properly.
+
 ## Bugs ##
 
 Yes, mosquitoes.
