@@ -3,7 +3,7 @@ Play pong in a browser using your phone as the controller.
 
 This was a demo used for the 2012 [Cluecon](http://www.cluecon.com) presentation [Stupid Things You Can Do With VoIP](https://www.youtube.com/watch?v=cZSRkkbf1D0).
 
-As of January 2016, tested as working in the following browsers:
+As of November 2018, tested as working in the following browsers:
 
  * Chrome
  * Firefox
@@ -23,7 +23,9 @@ In FreeSWITCH, add the following extension:
     <!-- Internal extension for VoIPong -->
     <extension name="voipong">
       <condition field="destination_number" expression="^voipong$" break="on-true">
+        <action application="set" data="socket_resume=true"/>
         <action application="socket" data="127.0.0.1:3001 async full"/>
+        <action application="respond" data="500 socket failure"/>
       </condition>
     </extension>
 
