@@ -241,7 +241,7 @@ $.pong = {
 $(document).ready(function(){
   $.pong.setup();
 
-  var socket = io.connect();
+  var socket = io();
   var log_server_response = function () {
     console.log.call(console, arguments);
   }

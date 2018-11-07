@@ -1,0 +1,18 @@
+extends layout.pug
+
+block content
+  div#header
+    div.score_container#player_score_container Player 1:
+      span#player_score 0
+    div.title#title_container VoIPong
+    div.score_container#computer_score_container Player 2:
+      //span#computer_level
+      //(level):
+      span#computer_score 0
+  div#table
+    div.paddle#player
+    div.ball#ball1
+    div.paddle#computer
+    div.goal#goal_player
+    div.goal#goal_computer
+

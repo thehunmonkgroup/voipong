@@ -1,56 +1,46 @@
-var debug = true;
+const debug = true;
 
 /**
  * Module dependencies.
  */
 
-var _ = require('underscore');
-var express = require('express');
+const _ = require('underscore');
+const express = require('express');
+const errorHandler = require('errorhandler');
 
-var app = module.exports = express.createServer();
-var io = require('socket.io').listen(app);
-var esl = require('esl');
+const app = module.exports = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const esl = require('esl');
 esl.debug = false;
-var Backbone = require('backbone');
-var routes = require('./routes')(app, io);
+const Backbone = require('backbone');
+const routes = require('./routes')(app, io);
+
+const env = process.env.NODE_ENV || 'development';
 
 // Configuration
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'pug');
+app.use(express.static(__dirname + '/public'));
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
+if (env == 'development') {
+  app.use(errorHandler({dumpExceptions: true, showStack: true}));
+}
+else {
+  app.use(errorHandler());
+}
 
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
 
 app.get('/', routes.index);
 
-io.enable('browser client minification');  // send minified client
-io.enable('browser client etag');          // apply etag caching logic based on version number
-io.enable('browser client gzip');          // gzip the file
-io.set('transports', [                     // enable all transports (optional if you want flashsocket)
-  'websocket'
-  , 'flashsocket'
-  , 'htmlfile'
-  , 'xhr-polling'
-  , 'jsonp-polling'
-]);
-
-var debug_log = function(message) {
+const debug_log = (message) => {
   if (debug) {
     console.log(message);
   }
 }
 
-var models = {};
+const models = {};
 
 models.Call = Backbone.Model.extend({
   initialize: function(options) {
@@ -79,9 +69,9 @@ models.Call = Backbone.Model.extend({
     this.trigger('hungUp', this.id);
   },
   keyPressed: function(data) {
-    var digit = data.body['DTMF-Digit'];
+    const digit = data.body['DTMF-Digit'];
     debug_log("key press on " + this.id + ": " + digit);
-    var event_data = {
+    const event_data = {
       id: this.id,
       digit: digit,
     }
@@ -96,28 +86,30 @@ models.Calls = Backbone.Collection.extend({
 });
 
 // Instantiate it.
-var activeCalls = new models.Calls();
+const activeCalls = new models.Calls();
 
-var add_call = function(call) {
+const add_call = (call) => {
   // New calls should be answered automatically.
   call.answer();
 }
 activeCalls.on('add', add_call);
 
-var remove_call = function(call) {
+const remove_call = (call) => {
   debug_log("removing call: " + call.id);
 }
 activeCalls.on('remove', remove_call);
 
 // FreeSWITCH.
-var fsconn = esl.createCallServer()
-var call_connected = function(call) {
+const fsconn = esl.server(function() {
+  debug_log("connected to FreeSWITCH");
+  const call = this;
   // Only two players, so drop other calls.
   if (activeCalls.length < 2) {
     // Just adding it to this collection will
     // instantiate it and trigger events.
-    var new_call = {
-      id: call.body.variable_uuid,
+    //console.log(call);
+    const new_call = {
+      id: call.uuid,
       call: call,
     }
     activeCalls.add([ new_call ]);
@@ -125,39 +117,38 @@ var call_connected = function(call) {
   else {
     call.hangup();
   }
-}
-fsconn.on('CONNECT', call_connected);
+});
 fsconn.listen(3001);
 
 // New socket connections from the client (browser).
-var socket_connected = function(socket) {
-  var log_client_response = function(data) {
+const socket_connected = (socket) => {
+  const log_client_response = (data) => {
     console.log(data);
   }
   socket.on('key press received', log_client_response);
 
   // Standard way to pass messages to client.
-  var status_message = function(message) {
+  const status_message = (message) => {
     socket.emit('status', { message: message });
   }
   status_message('ready to start demo');
-  var answered = function(id) {
+  const answered = (id) => {
     socket.emit('new player', id);
   }
   activeCalls.on("answered", answered);
-  var hungup = function(id) {
-    var call = activeCalls.get(id);
+  const hungup = (id) => {
+    const call = activeCalls.get(id);
     activeCalls.remove(call);
     socket.emit('player quit', id);
   }
   activeCalls.on("hungUp", hungup);
-  var key_pressed = function(data) {
+  const key_pressed = (data) => {
     socket.emit("keyPressed", data);
   }
   activeCalls.on("keyPressed", key_pressed);
 }
-io.sockets.on('connection', socket_connected);
+io.on('connection', socket_connected);
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+server.listen(3000);
+console.log("Express server listening on port %d in %s mode", 3000, app.settings.env);
 
