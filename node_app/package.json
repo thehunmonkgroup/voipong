@@ -8,7 +8,7 @@
         "esl": "9.0.1",
         "express": "4.16.4",
         "pug": "2.0.3",
-        "socket.io": "2.1.1",
+        "socket.io": "2.4.1",
         "underscore": "1.9.0"
     }
 }
