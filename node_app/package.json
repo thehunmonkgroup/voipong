@@ -6,7 +6,7 @@
         "backbone": "1.5.0",
         "errorhandler": "1.5.1",
         "esl": "11.0.3",
-        "express": "4.18.2",
+        "express": "4.19.2",
         "pug": "3.0.2",
         "socket.io": "4.7.2",
         "underscore": "1.13.6"
