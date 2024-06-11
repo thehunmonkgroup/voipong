@@ -3,12 +3,12 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        "backbone": "1.5.0",
+        "backbone": "1.6.0",
         "errorhandler": "1.5.1",
-        "esl": "11.0.3",
+        "esl": "11.1.1",
         "express": "4.19.2",
-        "pug": "3.0.2",
-        "socket.io": "4.7.2",
+        "pug": "3.0.3",
+        "socket.io": "4.7.5",
         "underscore": "1.13.6"
     }
 }
