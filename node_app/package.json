@@ -5,10 +5,10 @@
     "dependencies": {
         "backbone": "1.6.0",
         "errorhandler": "1.5.1",
-        "esl": "11.1.1",
-        "express": "4.20.0",
+        "esl": "11.2.1",
+        "express": "4.21.1",
         "pug": "3.0.3",
-        "socket.io": "4.7.5",
-        "underscore": "1.13.6"
+        "socket.io": "4.8.1",
+        "underscore": "1.13.7"
     }
 }
