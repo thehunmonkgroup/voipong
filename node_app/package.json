@@ -9,6 +9,6 @@
         "express": "4.21.1",
         "pug": "3.0.3",
         "socket.io": "4.8.1",
-        "underscore": "1.13.7"
+        "underscore": "1.13.8"
     }
 }
